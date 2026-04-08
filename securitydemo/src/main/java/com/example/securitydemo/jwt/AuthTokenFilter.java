@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+//CLASE EN LA QUE PERSONALIZO MI PROPIO FILTRO DE SEGURIDAD con la ayuda de JwUtils
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -26,14 +27,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
-
+    //Metodo en el que creo mi propio filtro personalizado.
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        logger.debug("AuthoTokenFilter called for URI: {}", request.getRequestURI());
+        logger.debug("AuthTokenFilter called for URI: {}", request.getRequestURI());
 
         try {
 
@@ -42,6 +44,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                 String userName = jwtUtils.getUserNameFromJWTToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+                //Creo objeto de autenticación.
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,null,userDetails.getAuthorities()
                 );
@@ -53,15 +56,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }catch(Exception ex) {
             logger.error("Cannot set user authentication: {}", ex.getMessage());
         }
+
         filterChain.doFilter(request, response);
     }
 
+    //Obtengo la cabecera de la solicitud
     private String parseJwt(HttpServletRequest request) {
         String jwt = jwtUtils.getJwtFromHeader(request);
         logger.debug("AuthoTokenFilter.java: {}", jwt);
         return jwt;
     }
-
-
 
 }

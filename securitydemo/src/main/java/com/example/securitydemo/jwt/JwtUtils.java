@@ -18,6 +18,7 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
+//CLASE AUXILIAR QUE ME PERMITE TRABAJAR CON EL TOKEN.
 public class JwtUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
@@ -28,18 +29,20 @@ public class JwtUtils {
     @Value("${spring.app.jwtSecret}")
     private String jwtSecret;
 
-    //Obtener el JWT de la cabecera
+
+    //Obtengo el JWT de la cabecera
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         logger.debug("Authorizatrion Header: {}", bearerToken);
 
         if(bearerToken != null && bearerToken.startsWith("Bearer "))
-            return bearerToken.substring(7); //Remueve Bearer prefijo
+            return bearerToken.substring(7); //Remueve Bearer prefijo y me queda el token
 
         return null;
     }
 
-    //Generar el token a partir del Username
+
+    //Obtengo el token a partir del Username
     public String generateTokenFromUsername(UserDetails userDetails) {
         String username = userDetails.getUsername();
         return Jwts.builder()
@@ -48,10 +51,10 @@ public class JwtUtils {
                 .expiration(new Date((new Date().getTime() + jwtExpirationsMs)))
                 .signWith(key())
                 .compact();
-
     }
 
-    //Obtener el Username a partir del Token
+
+    //Obtengo el Username a partir del Token
     public String getUserNameFromJWTToken(String token) {
         return Jwts.parser()
                 .verifyWith((SecretKey) key())
@@ -59,12 +62,14 @@ public class JwtUtils {
                 .getPayload().getSubject();
     }
 
-    //Generar una clave de firma
+
+    //Metodo interno - Genero una clave de firma
     public Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    //Validar el JWT Token
+
+    //Valido el JWT Token
     public boolean validateJwtToken(String authToken) {
         try {
             System.out.println("Validate");

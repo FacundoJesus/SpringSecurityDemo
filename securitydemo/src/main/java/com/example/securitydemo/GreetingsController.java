@@ -27,12 +27,6 @@ import java.util.stream.Collectors;
 public class GreetingsController {
 
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
     @GetMapping("/hello")
     public String sayHello() {
         return "Hello";
@@ -51,6 +45,12 @@ public class GreetingsController {
         return "Hello Admin!";
     }
 
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {

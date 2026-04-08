@@ -34,8 +34,6 @@ public class SecurityConfig {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
-    //@Autowired
-    //private UserDetailsService userDetailsService;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -44,13 +42,15 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) {
+
         http.authorizeHttpRequests((authorizeRequests) ->
                 authorizeRequests.requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/signin").permitAll()
                         .anyRequest().authenticated());
-        http.sessionManagement(
-                session ->
+
+        http.sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         //http.formLogin(withDefaults());
         //http.httpBasic(withDefaults());
 
@@ -99,8 +99,7 @@ public class SecurityConfig {
             }
         };
     }
-
-
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
